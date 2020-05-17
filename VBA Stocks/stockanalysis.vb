@@ -10,9 +10,13 @@ Sub stockdata():
         Dim totalvolume As Double
         Dim summaryrow As Integer
         Dim openprice As Double
+
+        'need to manually set the first open price data to calculate percent change, the rest is set in the loop
         openprice = ws.Cells(2, 3).Value
     
+
         totalvolume = 0
+        'need our summary table to start at second row, first row for headers
         summaryrow = 2
     
         'summary table
@@ -50,6 +54,7 @@ Sub stockdata():
                 End If
                 
                 'add percent change value to the summary table
+                'use Format() to format the cell values as a percentage
                 ws.Cells(summaryrow, 11).Value = Format(percentchange, "Percent")
             
                 'add up total volume
@@ -67,7 +72,7 @@ Sub stockdata():
             End If
         Next i
         
-        'need to count the rows in the summary table instead of the ticker data
+        'need to count the rows in the summary table instead of the original data
         lastrowpercent = ws.Cells(Rows.Count, 10).End(xlUp).Row
 
 
@@ -80,6 +85,7 @@ Sub stockdata():
             Else
                 ws.Cells(i, 10).Interior.ColorIndex = 3
             End If
+            
         Next i
         
     'summary table headers'
@@ -88,7 +94,10 @@ Sub stockdata():
     ws.Cells(4, 14).Value = "Greatest Total Volume"
     ws.Cells(1, 15).Value = "Ticker"
     ws.Cells(1, 16).Value = "Value"
-    
+
+
+        'loop to find the max, min, etc. values to construct summary table
+        'remember to use lastrowpercent instead of lastrow because we need to go to the last row of the proccessed data
         For i = 2 To lastrowpercent
         
         'declaring variables for each value
@@ -100,14 +109,16 @@ Sub stockdata():
             'use the if statement so we can also find the corresponding ticker for max increase
             If ws.Cells(i, 11).Value = maxincrease Then
                 ws.Cells(2, 15).Value = ws.Cells(i, 9).Value
-                ws.Cells(2, 16).Value = maxincrease
+                'need to format this as a percent as well
+                ws.Cells(2, 16).Value = Format(maxincrease, "Percent")
                 
             'min percent increase
             ElseIf ws.Cells(i, 11).Value = maxdecrease Then
                 ws.Cells(3, 15).Value = ws.Cells(i, 9).Value
-                ws.Cells(3, 16).Value = maxdecrease
+                ws.Cells(3, 16).Value = Format(maxdecrease, "Percent")
             
             'max total volume
+            'also format this to curreny as well
             ElseIf ws.Cells(i, 12).Value = maxvolume Then
                 ws.Cells(4, 15).Value = ws.Cells(i, 9).Value
                 ws.Cells(4, 16).Value = maxvolume
